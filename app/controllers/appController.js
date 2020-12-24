@@ -1,9 +1,24 @@
 const db              = require('../core/db');
+const Op              = db.Sequelize.Op;
 
-exports.getAllPost    = (req, res) => {
-  res.json({
-    message: "Hello World"
-  });
+exports.getAllPost    = async (req, res) => {
+  const title = req.query.title;
+
+  try {
+    const results = await db.posts.findAll({
+      where: title ? { title: { [Op.like]: `%${title}%`}} : null
+    });
+    console.log(results);
+    res.status(200).json({
+      message: 'berhasil',
+      results
+    });
+  } catch(err) {
+    console.log(err);
+    res.status(500).json({
+      message: err.message ? err.message : 'Server Error'
+    });
+  }
 }
 
 exports.createPost    = async (req, res) => {
@@ -33,5 +48,22 @@ exports.createPost    = async (req, res) => {
     })
   } catch(err) {
     throw new Error(err);
+  }
+}
+
+exports.getPost = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    // const result = await db.posts.findOne({ where: { id } });
+    const result = await db.posts.findByPk(id);
+    res.status(200).json({
+      message: 'berhasil',
+      result
+    });
+  } catch(err) {
+    res.status(500).json({
+      message: err.message ? err.message : 'Server Error'
+    });
   }
 }

@@ -42,8 +42,21 @@ app.use(helmet());
 app.use(compression());
 app.use(morgan('dev'));
 
-// sync database
+// sync database (membuat table baru, ketika table nya belum ada)
 db.posts.sync();
+/*
+  Untuk synch database
+  sekaligus menghapus dan
+  membuat ulang table dari model.
+
+  db.posts.sync({ force: true })
+    .then(response => {
+      cetak response
+    })
+    .catch(err => {
+      cetak err
+    })
+*/
 
 app.use('/api', require('./app/routes/pages'));
 
